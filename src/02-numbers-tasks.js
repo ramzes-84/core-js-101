@@ -234,18 +234,11 @@ function isPrime(num) {
  *   toNumber(42, 0) => 42
  *   toNumber(new Number(42), 0) => 42
  */
-function toNumber(value, def) {
-  if (value === null) return def;
-  const convertToNum = Number(value);
-  // if (Number.isNan(value)) return def;
-  if (typeof convertToNum === 'number') return value;
+function toNumber(v, def) {
+  const num = !!Number(v);
+  if (num) return v;
   return def;
 }
-
-// console.log(Number.isNan(null));
-// console.log(Number(undefined));
-// console.log(Number('15'));
-// console.log(Number('str'));
 
 module.exports = {
   getRectangleArea,
