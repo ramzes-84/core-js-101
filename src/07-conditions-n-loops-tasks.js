@@ -177,7 +177,6 @@ function isInsideCircle(circle, point) {
  */
 function findFirstSingleChar(str) {
   let string = str;
-  // let result = null;
   for (let i = 0; i < str.length; i += 1) {
     if (str.includes(str[i], i + 1)) {
       string = string.replaceAll(str[i], '');
@@ -208,8 +207,12 @@ function findFirstSingleChar(str) {
  *   5, 3, true, true   => '[3, 5]'
  *
  */
-function getIntervalString(/* a, b, isStartIncluded, isEndIncluded */) {
-  throw new Error('Not implemented');
+function getIntervalString(a, b, isStartIncluded, isEndIncluded) {
+  const max = Math.max(a, b);
+  const min = Math.min(a, b);
+  const start = isStartIncluded ? '[' : '(';
+  const end = isEndIncluded ? ']' : ')';
+  return `${start}${min}, ${max}${end}`;
 }
 
 
@@ -225,10 +228,9 @@ function getIntervalString(/* a, b, isStartIncluded, isEndIncluded */) {
  * 'rotator' => 'rotator'
  * 'noon' => 'noon'
  */
-function reverseString(/* str */) {
-  throw new Error('Not implemented');
+function reverseString(str) {
+  return str.split('').reverse().join('');
 }
-
 
 /**
  * Reverse the specified integer number (put all digits in reverse order)
@@ -242,10 +244,14 @@ function reverseString(/* str */) {
  *   87354 => 45378
  *   34143 => 34143
  */
-function reverseInteger(/* num */) {
-  throw new Error('Not implemented');
+function reverseInteger(num) {
+  const string = String(num);
+  let r = '';
+  for (let i = 0; i < string.length; i += 1) {
+    r = string[i] + r;
+  }
+  return +r;
 }
-
 
 /**
  * Validates the CCN (credit card number) and return true if CCN is valid
@@ -267,8 +273,25 @@ function reverseInteger(/* num */) {
  *   5436468789016589 => false
  *   4916123456789012 => false
  */
-function isCreditCardNumber(/* ccn */) {
-  throw new Error('Not implemented');
+function isCreditCardNumber(ccn) {
+  const value = String(ccn).replace(/\D/g, '');
+
+  let nCheck = 0;
+  let bEven = false;
+
+  for (let n = value.length - 1; n >= 0; n -= 1) {
+    let nDigit = parseInt(value.charAt(n), 10);
+
+    if (bEven) {
+      nDigit *= 2;
+      if ((nDigit) > 9) nDigit -= 9;
+    }
+
+    nCheck += nDigit;
+    bEven = !bEven;
+  }
+
+  return (nCheck % 10) === 0;
 }
 
 /**
@@ -285,10 +308,14 @@ function isCreditCardNumber(/* ccn */) {
  *   10000 ( 1+0+0+0+0 = 1 ) => 1
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
-function getDigitalRoot(/* num */) {
-  throw new Error('Not implemented');
+function getDigitalRoot(num) {
+  const arr = String(num).split('').map((i) => +i);
+  let sum = arr.reduce((acc, i) => acc + i, 0);
+  if (sum > 9) {
+    sum = getDigitalRoot(sum);
+  }
+  return sum;
 }
-
 
 /**
  * Returns true if the specified string has the balanced brackets and false otherwise.
@@ -311,10 +338,48 @@ function getDigitalRoot(/* num */) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
-}
+function isBracketsBalanced(str, bracketsConfig = [['[', ']'], ['(', ')'], ['{', '}'], ['<', '>']]) {
+  const stack = [];
+  let result = true;
+  const brktsTypes = {};
+  // eslint-disable-next-line no-restricted-syntax
+  for (const item of bracketsConfig) { // Наполняем объект образцами скобок
+    // eslint-disable-next-line prefer-destructuring
+    brktsTypes[item[0]] = item[1];
+  }
 
+  // eslint-disable-next-line no-restricted-syntax
+  for (const letter of str) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const key in brktsTypes) {
+      if (letter === key && key !== brktsTypes[key]) stack.push(letter);
+      else if (letter === key && key === brktsTypes[key] && stack.length === 0) stack.push(letter);
+      else if (letter === key && key === brktsTypes[key]
+        && stack[stack.length - 1] !== letter
+        && stack.length > 0) stack.push(letter);
+      else if (letter === brktsTypes[key]
+        && ((stack.length === 0) || (stack[stack.length - 1] !== key))) {
+        result = false;
+        break;
+      } else if (letter === brktsTypes[key] && stack[stack.length - 1] === key) stack.pop();
+    }
+  }
+
+  if (stack.length > 0) result = false;
+
+  return result;
+}
+// console.log(isBracketsBalanced(''));
+// console.log(isBracketsBalanced('[]'));
+// console.log(isBracketsBalanced('{}'));
+// console.log(isBracketsBalanced('()'));
+// console.log(isBracketsBalanced('[[]'));
+// console.log(isBracketsBalanced(']['));
+// console.log(isBracketsBalanced('[[][][[]]]'));
+// console.log(isBracketsBalanced('[[][]]['));
+// console.log(isBracketsBalanced('{)'));
+// console.log(isBracketsBalanced('{[(<{[]}>)]}'));
+// console.log(isBracketsBalanced());
 
 /**
  * Returns the string with n-ary (binary, ternary, etc, where n <= 10)
