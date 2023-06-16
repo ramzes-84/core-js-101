@@ -369,17 +369,6 @@ function isBracketsBalanced(str, bracketsConfig = [['[', ']'], ['(', ')'], ['{',
 
   return result;
 }
-// console.log(isBracketsBalanced(''));
-// console.log(isBracketsBalanced('[]'));
-// console.log(isBracketsBalanced('{}'));
-// console.log(isBracketsBalanced('()'));
-// console.log(isBracketsBalanced('[[]'));
-// console.log(isBracketsBalanced(']['));
-// console.log(isBracketsBalanced('[[][][[]]]'));
-// console.log(isBracketsBalanced('[[][]]['));
-// console.log(isBracketsBalanced('{)'));
-// console.log(isBracketsBalanced('{[(<{[]}>)]}'));
-// console.log(isBracketsBalanced());
 
 /**
  * Returns the string with n-ary (binary, ternary, etc, where n <= 10)
@@ -401,8 +390,8 @@ function isBracketsBalanced(str, bracketsConfig = [['[', ']'], ['(', ')'], ['{',
  *    365, 4  => '11231'
  *    365, 10 => '365'
  */
-function toNaryString(/* num, n */) {
-  throw new Error('Not implemented');
+function toNaryString(num, n) {
+  return num.toString(n);
 }
 
 
@@ -418,10 +407,34 @@ function toNaryString(/* num, n */) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  const arrArr = pathes.map((i) => i.split('/')).sort((a, b) => b.length - a.length);
+  const collection = arrArr[0];
+  let result;
+  const etalon = [];
+  // eslint-disable-next-line no-restricted-syntax, no-labels
+  outer: for (let i = 0; i < collection.length; i += 1) {
+    etalon.push(collection[i]);
+    for (let j = 0; j < arrArr.length; j += 1) {
+      // eslint-disable-next-line no-continue
+      if (collection[i] === arrArr[j][i]) continue;
+      else {
+        etalon.pop();
+        // eslint-disable-next-line no-labels
+        break outer;
+      }
+    }
+  }
+  if (etalon.length === 0) {
+    result = '';
+  } else if (etalon.length === 1 && etalon[0] === '') {
+    result = '/';
+  } else {
+    result = (etalon[etalon.length - 1].includes('.'))
+      ? etalon.join('/') : (`${etalon.join('/')}/`);
+  }
+  return result;
 }
-
 
 /**
  * Returns the product of two specified matrixes.
@@ -441,8 +454,15 @@ function getCommonDirectoryPath(/* pathes */) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const r = m1.map((line) => {
+    const arr = [];
+    for (let i = 0; i < m1.length; i += 1) {
+      arr.push(line.map((item, index) => item * m2[index][i]).reduce((acc, curr) => acc + curr, 0));
+    }
+    return arr;
+  });
+  return r;
 }
 
 
@@ -476,10 +496,35 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(pos) {
+  let r;
+  const [ul, u, ur, cl, c, cr, dl, d, dr] = [pos[0][0], pos[0][1], pos[0][2], pos[1][0], pos[1][1],
+    pos[1][2], pos[2][0], pos[2][1], pos[2][2]];
+  if (c) {
+    if ((ul === c && dr === c)
+    || (ur === c && dl === c)
+    || (u === c && d === c)
+    || (cr === c && cl === c)) r = c;
+  }
+  if (cr) {
+    if (ur === cr && dr === cr) r = cr;
+  }
+  if (cl) {
+    if (ul === cl && dl === cl) r = cl;
+  }
+  if (u) {
+    if (ur === u && ul === u) r = u;
+  }
+  if (d) {
+    if (dr === d && dl === d) r = d;
+  }
+  return r;
 }
 
+// console.log(evaluateTicTacToePosition([[ 'X', 'X', 'X' ],
+//                                        [ '0','0',   ],
+//                                        [ '0',   ,   ]]
+// ));
 
 module.exports = {
   getFizzBuzz,
