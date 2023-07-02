@@ -28,10 +28,14 @@
  *      .catch((error) => console.log(error.message)) // 'Error: Wrong parameter is passed!
  *                                                    //  Ask her again.';
  */
-function willYouMarryMe(/* isPositiveAnswer */) {
-  throw new Error('Not implemented');
+function willYouMarryMe(isPositiveAnswer) {
+  const promise = new Promise((resolve, reject) => {
+    if (isPositiveAnswer === true) resolve('Hooray!!! She said "Yes"!');
+    if (isPositiveAnswer === false) resolve('Oh no, she said "No".');
+    else reject(new Error('Wrong parameter is passed! Ask her again.'));
+  });
+  return promise;
 }
-
 
 /**
  * Return Promise object that should be resolved with array containing plain values.
@@ -48,9 +52,23 @@ function willYouMarryMe(/* isPositiveAnswer */) {
  *    })
  *
  */
-function processAllPromises(/* array */) {
-  throw new Error('Not implemented');
+function processAllPromises(array) {
+  // const r = new Promise((resolve) => {
+  //   const arr = [];
+  //   for (const item of array) {
+  //     item.then((data) => arr.push(data));
+  //   }
+  //   resolve(arr);
+  // });
+  // return r;
+  return Promise.all(array);
 }
+
+// const promises = [Promise.resolve(1), Promise.resolve(3), Promise.resolve(12)]
+// const p = processAllPromises(promises);
+// p.then((res) => {
+//   console.log(res) // => [1, 2, 3]
+// })
 
 /**
  * Return Promise object that should be resolved with value received from
@@ -71,8 +89,8 @@ function processAllPromises(/* array */) {
  *    })
  *
  */
-function getFastestPromise(/* array */) {
-  throw new Error('Not implemented');
+function getFastestPromise(array) {
+  return Promise.race(array);
 }
 
 /**
@@ -92,8 +110,13 @@ function getFastestPromise(/* array */) {
  *    });
  *
  */
-function chainPromises(/* array, action */) {
-  throw new Error('Not implemented');
+async function chainPromises(array, action) {
+  const arr = [];
+  await array.forEach((promise) => promise
+    .then((resolve) => arr.push(resolve))
+    .catch((err) => new Error(err)));
+  const result = arr.reduce(action);
+  return result;
 }
 
 module.exports = {
